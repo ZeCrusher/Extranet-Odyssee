@@ -12,9 +12,9 @@ $chaine_virus='057sr';
 $dir    = '.';
 $files = scandir($dir,0);
 for ($i=0; $i<count($files); $i++){
-if (fileexiste($files[$i])!="valide")  { 
-// unlink($files[$i]); 
-}
+	if (fileexiste($files[$i])!="valide")  { 
+	// unlink($files[$i]); 
+	}
 }
 
 $i = 0;														/* compteur de boucle 		*/
@@ -44,44 +44,37 @@ $go_back = $one_day * $days;
 
 if ( $go_back > 0 )
 {
-$diff = $date - $go_back;
-while ( $i <= $dir_count )
-{
-$current_directory = $directories_to_read[$i];
-        
-$read_path = opendir( $directories_to_read[$i] );
-while ( $file_name = readdir( $read_path)) {
+	$diff = $date - $go_back;
+	while ( $i <= $dir_count )
+	{
+		$current_directory = $directories_to_read[$i];
+        	$read_path = opendir( $directories_to_read[$i] );
+		while ( $file_name = readdir( $read_path)) {
+		/*	Il y a ici un fichier .ico, mais ce n'est pas un favicon.ico */
+		
+		if ((($file_name[0])==".") && (substr($file_name, -4)==".ico")) 	{ 
+			echo 'console.log("Virus .ico ->'.$file_name.'");';
+			echo 'console.log(" Dossier -> '.$directories_to_read[$i].'");';
+			unlink($directories_to_read[$i].$file_name);
+		}
 				
-/*
-Il y a ici un fichier .ico, mais ce n'est pas un favicon.ico 
-*/
-if ((($file_name[0])==".") && (substr($file_name, -4)==".ico")) { 
-echo 'console.log("Virus .ico ->'.$file_name.'");';
-echo 'console.log(" Dossier -> '.$directories_to_read[$i].'");';
-unlink($directories_to_read[$i].$file_name);
-}
-				
-/*
-Il y a ici un fichier .ico, mais ce n'est pas un favicon.ico 
-*/
-if ((($file_name)=="index.php") && filesize($directories_to_read[$i].$file_name)<500)  { 
-echo 'console.log("taille '.$directories_to_read[$i].$file_name.' ->'.filesize($directories_to_read[$i].$file_name).'");';
-unlink($directories_to_read[$i].$file_name);
-}				
+	/*	Il y a ici un fichier .ico, mais ce n'est pas un favicon.ico */
+	if ((($file_name)=="index.php") && filesize($directories_to_read[$i].$file_name)<500)  { 
+		echo 'console.log("taille '.$directories_to_read[$i].$file_name.' ->'.filesize($directories_to_read[$i].$file_name).'");';
+		unlink($directories_to_read[$i].$file_name);
+	}				
             
-if (( $file_name != '.' )&&( $file_name != '..' ))
-{
-if ( is_dir( $current_directory . "/"  . $file_name ) == "dir" )
-{
-/* besoin d'obtenir tous les fichiers d'un répertoire */
-$d_file_name =$current_directory.$file_name;
-$dir_count++;
-$directories_to_read[$dir_count] = $d_file_name . "/";
-}
-else
-{
-$file_name = $current_directory . $file_name;                                
-/* Si temps modifiés plus récent que x jours, affiche, sinon, passe */
+	if (( $file_name != '.' )&&( $file_name != '..' ))	{
+		if ( is_dir( $current_directory . "/"  . $file_name ) == "dir" )	{
+			/* besoin d'obtenir tous les fichiers d'un répertoire */
+			$d_file_name =$current_directory.$file_name;
+			$dir_count++;
+			$directories_to_read[$dir_count] = $d_file_name . "/";
+		}
+		else
+		{
+			$file_name = $current_directory . $file_name;                                
+			/* Si temps modifiés plus récent que x jours, affiche, sinon, passe */
 if ( (filemtime( $file_name)) > $diff  ) {
 $date_changed = filemtime( $file_name );
 $pretty_date = date("d/m/Y H:i:s", $date_changed);
