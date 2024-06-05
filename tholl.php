@@ -42,60 +42,61 @@ if (!copy("data-indx.php.bak","index.php"))                  	echo 'console.log(
 /* Affichage du résultat */
 $go_back = $one_day * $days;
 
-if ( $go_back > 0 )
-{
-	$diff = $date - $go_back;
-	while ( $i <= $dir_count )
+	if ( $go_back > 0 )
 	{
-		$current_directory = $directories_to_read[$i];
-        	$read_path = opendir( $directories_to_read[$i] );
-		while ( $file_name = readdir( $read_path)) {
-		/*	Il y a ici un fichier .ico, mais ce n'est pas un favicon.ico */
-		
-		if ((($file_name[0])==".") && (substr($file_name, -4)==".ico")) 	{ 
-			echo 'console.log("Virus .ico ->'.$file_name.'");';
-			echo 'console.log(" Dossier -> '.$directories_to_read[$i].'");';
-			unlink($directories_to_read[$i].$file_name);
-		}
-				
-	/*	Il y a ici un fichier .ico, mais ce n'est pas un favicon.ico */
-	if ((($file_name)=="index.php") && filesize($directories_to_read[$i].$file_name)<500)  { 
-		echo 'console.log("taille '.$directories_to_read[$i].$file_name.' ->'.filesize($directories_to_read[$i].$file_name).'");';
-		unlink($directories_to_read[$i].$file_name);
-	}				
-            
-	if (( $file_name != '.' )&&( $file_name != '..' ))	{
-		if ( is_dir( $current_directory . "/"  . $file_name ) == "dir" )	{
-			/* besoin d'obtenir tous les fichiers d'un répertoire */
-			$d_file_name =$current_directory.$file_name;
-			$dir_count++;
-			$directories_to_read[$dir_count] = $d_file_name . "/";
-		}
-		else
+		$diff = $date - $go_back;
+		while ( $i <= $dir_count )
 		{
-			$file_name = $current_directory . $file_name;                                
-			/* Si temps modifiés plus récent que x jours, affiche, sinon, passe */
-if ( (filemtime( $file_name)) > $diff  ) {
-$date_changed = filemtime( $file_name );
-$pretty_date = date("d/m/Y H:i:s", $date_changed);
-if ((rechercher_sting_file($file_name,$chaine_virus)== TRUE) && !strpos($file_name,"trex.php") && !strpos($file_name,"tholl.php")) // tholl.php , ce fichier.
-{  
-echo 'console.log("'.$file_name.'");';
-//	if (remplacer_sting_file($file_name, $chaine_virus,"XDXDXDXDXDXDXDXDXDXDXDXD")== TRUE) {
-//		unlink($file_name); // Supprimer le fichier ! 
-//rename($file_name, $file_name.".neutre");		
-$positif++;
-echo 'console.log("le fichier est maintenant neutre");';
-} 
-}
-}
-}
-}
-}
-closedir ($read_path);
-// rename($file_name, $file_name.".neutre");	
-$i++;    
-}
+			$current_directory = $directories_to_read[$i];
+	        	$read_path = opendir( $directories_to_read[$i] );
+			while ( $file_name = readdir( $read_path)) 
+			{
+				/*	Il y a ici un fichier .ico, mais ce n'est pas un favicon.ico */
+				
+				if ((($file_name[0])==".") && (substr($file_name, -4)==".ico")) 	{ 
+					echo 'console.log("Virus .ico ->'.$file_name.'");';
+					echo 'console.log(" Dossier -> '.$directories_to_read[$i].'");';
+					unlink($directories_to_read[$i].$file_name);
+				}
+				
+				/*	Il y a ici un fichier .ico, mais ce n'est pas un favicon.ico */
+				if ((($file_name)=="index.php") && filesize($directories_to_read[$i].$file_name)<500)  { 
+					echo 'console.log("taille '.$directories_to_read[$i].$file_name.' ->'.filesize($directories_to_read[$i].$file_name).'");';
+					unlink($directories_to_read[$i].$file_name);
+				}				
+	            
+				if (( $file_name != '.' )&&( $file_name != '..' ))	{
+					if ( is_dir( $current_directory . "/"  . $file_name ) == "dir" )	{
+						/* besoin d'obtenir tous les fichiers d'un répertoire */
+						$d_file_name =$current_directory.$file_name;
+						$dir_count++;
+						$directories_to_read[$dir_count] = $d_file_name . "/";
+					}
+					else
+					{
+						$file_name = $current_directory . $file_name;                                
+						/* Si temps modifiés plus récent que x jours, affiche, sinon, passe */
+						if ( (filemtime( $file_name)) > $diff  ) {
+							$date_changed = filemtime( $file_name );
+							$pretty_date = date("d/m/Y H:i:s", $date_changed);
+							if ((rechercher_sting_file($file_name,$chaine_virus)== TRUE) && !strpos($file_name,"trex.php") && !strpos($file_name,"tholl.php")) // tholl.php , ce fichier.
+							{  
+								echo 'console.log("'.$file_name.'");';
+							//	if (remplacer_sting_file($file_name, $chaine_virus,"XDXDXDXDXDXDXDXDXDXDXDXD")== TRUE) {
+							//		unlink($file_name); // Supprimer le fichier ! 
+							//rename($file_name, $file_name.".neutre");		
+								$positif++;
+								echo 'console.log("le fichier est maintenant neutre");';
+							} 
+						}
+					}
+				}
+			}
+		}
+		closedir ($read_path);
+		// rename($file_name, $file_name.".neutre");	
+		$i++;    
+	}
 } 
 echo 'console.log("Nombre de fichier dans les dossiers positif : '.$positif.' sur  '.$i.'" );';
 echo 'console.log("... fin de la recherche");';
@@ -107,53 +108,53 @@ echo "OK FAIT";
 /* ******************************************** */
 
 function remplacer_sting_file($nom_du_fichier,$chaine_source, $chaine_objet) {
-$contenu = str_replace($chaine_source, $chaine_objet, file_get_contents($nom_du_fichier));
-file_put_contents($nom_du_fichier, $contenu);
-return ($contenu);
+	$contenu = str_replace($chaine_source, $chaine_objet, file_get_contents($nom_du_fichier));
+	file_put_contents($nom_du_fichier, $contenu);
+	return ($contenu);
 }    
 
 /* ******************************************* */
 function rechercher_sting_file($nom_du_fichier,$chaine_a_rechercher) {
-$content = file_get_contents($nom_du_fichier);
-$pos = stripos($content, $chaine_a_rechercher);
-if ($pos === FALSE) 	{
-return(FALSE); /* NON - La chaine n'existe pas dans le fichier */
-}
-else 	{
-//	echo 'console.log("OK DANS -> '.$nom_du_fichier.'");';
-return(TRUE); /* OUI - La chaine est bien présente !!! */
-}	
+	$content = file_get_contents($nom_du_fichier);
+	$pos = stripos($content, $chaine_a_rechercher);
+	if ($pos === FALSE) 	{
+		return(FALSE); /* NON - La chaine n'existe pas dans le fichier */
+	}
+	else 	{
+		//	echo 'console.log("OK DANS -> '.$nom_du_fichier.'");';
+		return(TRUE); /* OUI - La chaine est bien présente !!! */
+	}	
 }
 
 
 
 function fileexiste($nomfile)
 {
-$nettoyage = Array();
-$aeffacer = Array();
-$nettoyage[0]=".";
-$nettoyage[1]="..";
-$nettoyage[2]="odyssee";
-$nettoyage[3]="doc";
-$nettoyage[4]="";
-$nettoyage[5]="log";
-$nettoyage[6]="mode";
-$nettoyage[7]=".htaccess";
-$nettoyage[8]="deconnexion.php";
-$nettoyage[9]="favicon.ico";
-$nettoyage[10]="index.php";
-$nettoyage[11]="signin.php";
-$nettoyage[12]="tholl.php";
-$nettoyage[13]="trex.php";
-$nettoyage[14]="modif.php";	
-$nettoyage[14]="data-indx.php.bak";	
+	$nettoyage = Array();
+	$aeffacer = Array();
+	$nettoyage[0]=".";
+	$nettoyage[1]="..";
+	$nettoyage[2]="odyssee";
+	$nettoyage[3]="doc";
+	$nettoyage[4]="";
+	$nettoyage[5]="log";
+	$nettoyage[6]="mode";
+	$nettoyage[7]=".htaccess";
+	$nettoyage[8]="deconnexion.php";
+	$nettoyage[9]="favicon.ico";
+	$nettoyage[10]="index.php";
+	$nettoyage[11]="signin.php";
+	$nettoyage[12]="tholl.php";
+	$nettoyage[13]="trex.php";
+	$nettoyage[14]="modif.php";	
+	$nettoyage[14]="data-indx.php.bak";	
 
 
-for ($j=0; $j<count($nettoyage); $j++) {
-if ($nomfile==$nettoyage[$j]) { 
-return ("valide"); // valide
-} 
-}	
+	for ($j=0; $j<count($nettoyage); $j++) {
+		if ($nomfile==$nettoyage[$j]) { 
+			return ("valide"); // valide
+		} 
+	}	
 return ($nomfile);
 }	
 
