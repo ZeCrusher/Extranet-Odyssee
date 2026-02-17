@@ -89,7 +89,7 @@ tracage($_SERVER['PHP_SELF']);
 
 //include ('tholl.php'); // Anti malware et transformation en fichier .neutre ! 
 
-header('Location: /odyssee/index.php');
+header('Location: /odyssee/index.php'); // On part du principe que la personne est déjà logée. 
 exit();
   
 function tracage($texte) {
